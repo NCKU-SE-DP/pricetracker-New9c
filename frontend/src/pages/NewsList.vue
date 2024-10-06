@@ -111,6 +111,8 @@ export default {
     box-sizing: border-box;
     flex-grow: 1;
     margin-right: 1em;
+    min-width: 0;
+
 }
 
 .search-bar i{

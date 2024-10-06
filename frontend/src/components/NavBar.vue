@@ -1,13 +1,16 @@
 <template>
     <nav class="navbar">
         <div class="title"> <RouterLink to="/overview">價格追蹤小幫手</RouterLink></div>
-        <ul class="options">
+        <ul class="options" :class="{ 'menu-closed': !isMenuOpen }">
             <li><RouterLink to="/overview">物價概覽</RouterLink></li>
             <li><RouterLink to="/trending">物價趨勢</RouterLink></li>
             <li><RouterLink to="/news">相關新聞</RouterLink></li>
             <li v-if="!isLoggedIn"><RouterLink to="/login">登入</RouterLink></li>
             <li v-else @click="logout">Hi, {{getUserName}}! 登出</li>
         </ul>
+	    <div class="navbar-hamburger">
+            <li @click="toggleMenu">&#9776</li>
+	    </div>
     </nav>
 </template>
 
@@ -15,6 +18,11 @@
 import { useAuthStore } from '@/stores/auth';
 
 export default {
+    data() {
+        return {
+            isMenuOpen: false, // Initially, the menu is closed
+        };
+    },
     name: 'NavBar',
     computed: {
         isLoggedIn(){
@@ -30,7 +38,10 @@ export default {
         logout(){
             const userStore = useAuthStore();
             userStore.logout();
-        }
+        },
+        toggleMenu() {
+            this.isMenuOpen = !this.isMenuOpen; // Toggle the menu state
+        },
     }
 };
 </script>
@@ -75,4 +86,43 @@ export default {
     color: #575B5D;
 }
 
+/* Hide hamburger icon on desktop */
+.navbar-hamburger {
+	display: none;
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+	.options{
+		display: flex;
+		flex-direction: column;
+		position: absolute;
+		top: 70px;
+		left: 0px;
+		right: 0px;
+		background-color: #f0f0f0;
+        box-shadow: 0px 5px 5px -5px #000000;
+	}
+
+	.options li {
+		text-align: center;
+		padding: 10px 20px;
+		margin-left: 0px;
+		border-top: 1px solid #ccc;
+	}
+
+	.navbar-hamburger {
+        list-style: none;
+		display: block;
+		font-size: 1.5rem;
+		cursor: pointer;
+	}
+
+	.navbar-hamburger.active+.options{
+		display: flex;
+	}
+    .options.menu-closed{
+        display: none;
+    }
+}
 </style>
