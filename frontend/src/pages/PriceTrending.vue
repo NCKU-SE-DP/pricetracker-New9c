@@ -115,4 +115,18 @@ export default {
     box-sizing: border-box;
     padding: 1em;
 }
+@media (max-width: 850px) {
+    .selects {
+        flex-direction: column;
+    }
+
+    .selects>select {
+        width: 65%;
+        min-width: 0; 
+    }
+
+    .visualize > * {
+        overflow-x: auto;
+    }
+}
 </style>
