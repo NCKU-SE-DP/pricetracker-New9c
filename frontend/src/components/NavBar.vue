@@ -8,9 +8,9 @@
             <li v-if="!isLoggedIn"><RouterLink to="/login">登入</RouterLink></li>
             <li v-else @click="logout">Hi, {{getUserName}}! 登出</li>
         </ul>
-	    <div class="navbar-hamburger">
-            <li @click="toggleMenu">&#9776</li>
-	    </div>
+            <div class="navbar-hamburger">
+            <li @click="toggleMenu">&#9776;</li>
+            </div>
     </nav>
 </template>
 
