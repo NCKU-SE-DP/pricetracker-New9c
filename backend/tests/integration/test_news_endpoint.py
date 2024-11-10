@@ -4,10 +4,11 @@ from sqlalchemy import create_engine, StaticPool
 from sqlalchemy.orm import sessionmaker
 import json
 from jose import jwt
-from main import app
-from main import Base, NewsArticle, User, session_opener, user_news_association_table
-from main import NewsSumaryRequestSchema, PromptRequest
-from main import pwd_context
+from backend.src.database import get_database
+from backend.src.main import app
+from backend.src.main import Base, NewsArticle, User, user_news_association_table
+from backend.src.main import NewsSumaryRequestSchema, PromptRequest
+from backend.src.user import service as user_service
 from unittest.mock import Mock
 
 
@@ -27,7 +28,7 @@ def override_session_opener():
         db.close()
 
 
-app.dependency_overrides[session_opener] = override_session_opener
+app.dependency_overrides[get_database] = override_session_opener
 client = TestClient(app)
 
 @pytest.fixture(scope="module")
@@ -38,7 +39,7 @@ def clear_users():
 
 @pytest.fixture(scope="module")
 def test_user(clear_users):
-    hashed_password = pwd_context.hash("testpassword")
+    hashed_password = user_service._hash_password("testpassword")
 
     with next(override_session_opener()) as db:
         user = User(username="testuser", hashed_password=hashed_password)
