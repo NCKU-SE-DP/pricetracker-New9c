@@ -20,7 +20,7 @@ async def login_for_access_token(
 @router.post("/register")
 def create_user(user: UserAuthSchema, db: DatabaseSession):
     """create user"""
-    db_user = service.create_user(db, user.username, user.password)
+    db_user = service.register_user(db, user.username, user.password)
     return db_user
 
 

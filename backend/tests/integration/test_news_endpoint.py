@@ -1,14 +1,14 @@
 import pytest
 from fastapi.testclient import TestClient
+from jose import jwt
 from sqlalchemy import create_engine, StaticPool
 from sqlalchemy.orm import sessionmaker
 import json
-from jose import jwt
-from backend.src.database import get_database
-from backend.src.main import app
-from backend.src.main import Base, NewsArticle, User, user_news_association_table
-from backend.src.main import NewsSumaryRequestSchema, PromptRequest
-from backend.src.user import service as user_service
+from src.database import get_database
+from src.main import app
+from src.models import Base, NewsArticle, User
+from src.news.schemas import NewsSumaryRequestSchema
+from src.user import service as user_service
 from unittest.mock import Mock
 
 
@@ -110,7 +110,7 @@ def test_read_user_news(test_user, test_token, test_articles):
     assert json_response[1]["is_upvoted"] is False
 
 def mock_openai(mocker, return_content):
-    mock_openai_client = mocker.patch('main.OpenAI')
+    mock_openai_client = mocker.patch('src.news.service.OpenAI')
 
     mock_message = Mock()
     mock_message.content = return_content
@@ -128,11 +128,11 @@ def mock_openai(mocker, return_content):
 def test_search_news(mocker):
     mock_openai(mocker, "keywords")
 
-    mock_get_new_info = mocker.patch("main.get_new_info", return_value=[
+    mock_get_new_info = mocker.patch("src.news.service._get_new_info", return_value=[
         {"titleLink": "http://example.com/news1"}
     ])
 
-    mock_get = mocker.patch("main.requests.get", return_value=mocker.Mock(
+    mock_get = mocker.patch("src.news.service.requests.get", return_value=mocker.Mock(
         text="""
         <html>
         <h1 class="article-content__title">Test Title</h1>
