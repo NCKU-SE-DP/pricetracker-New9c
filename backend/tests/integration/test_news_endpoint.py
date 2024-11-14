@@ -9,6 +9,7 @@ from src.main import app
 from src.models import Base, NewsArticle, User
 from src.news.schemas import NewsSumaryRequestSchema
 from src.user import service as user_service
+
 from unittest.mock import Mock
 
 
