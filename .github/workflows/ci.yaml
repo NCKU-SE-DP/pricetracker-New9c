@@ -4,13 +4,16 @@ on:
   push:
     branches:
       - 'main'
+      - 'develop'
+      - 'fix/integration-test'
   pull_request:
     branches:
       - 'main'
+      - 'develop'
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: [F74136885]
 
     steps:
       - name: Checkout code
@@ -19,7 +22,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.12"
+          python-version: "3.10"
 
       - name: Install dependencies
         run: |
