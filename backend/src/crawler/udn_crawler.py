@@ -34,15 +34,17 @@ UDNCrawler Methods:
 
 import requests
 from bs4 import BeautifulSoup
+from pydantic import TypeAdapter
 from sqlalchemy.orm import Session
+from urllib.parse import quote
 from .crawler_base import NewsCrawlerBase, Headline, News, NewsWithSummary
-
+from ..models import NewsArticle
 
 class UDNCrawler(NewsCrawlerBase):
     CHANNEL_ID = 2
+    NEWS_WEBSITE_URL = "https://udn.com/api/more"
 
     def __init__(self, timeout: int = 5) -> None:
-        self.news_website_url = "https://udn.com/api/more"
         self.timeout = timeout
 
     def startup(self, search_term: str) -> list[Headline]:
@@ -57,32 +59,25 @@ class UDNCrawler(NewsCrawlerBase):
 
     def _fetch_news(self, page: int, search_term: str) -> list[Headline]:
         params = self._create_search_params(page, search_term)
-        response = self._perform_request(url=self.news_website_url, params=params)
-        return self._parse_headlines(response)
+        response = self._perform_request(url=UDNCrawler.NEWS_WEBSITE_URL, params=params)
+        return UDNCrawler._parse_headlines(response)
 
     def _create_search_params(self, page: int, search_term: str) -> dict:
-        return {
-            "channelId": self.CHANNEL_ID,
+        parameters = {
             "page": page,
-            "searchTerm": search_term,
+            "id": f"search:{quote(search_term)}",
+            "channelId": UDNCrawler.CHANNEL_ID,
+            "type": "searchword",
         }
+        return parameters
 
     def _perform_request(self, url: str | None = None, params: dict | None = None) -> requests.Response:
-        response = requests.get(url, params=params, timeout=self.timeout)
-        response.raise_for_status()
+        response = requests.get(url=url, params=params)
         return response
 
     @staticmethod
     def _parse_headlines(response: requests.Response) -> list[Headline]:
-        data = response.json()  # Parse the JSON response
-        headlines = []
-        for item in data.get("articles", []):  # Assume "articles" contains the list
-            headline = Headline(
-                title=item.get("title", "Untitled"),
-                url=item.get("url", "")
-            )
-            headlines.append(headline)
-        return headlines
+        return TypeAdapter(list[Headline]).validate_python(response.json()["lists"])
 
     def parse(self, url: str) -> News:
         response = self._perform_request(url=url)
@@ -115,7 +110,7 @@ class UDNCrawler(NewsCrawlerBase):
     
         return News(title=title, url=url, time=time, content=content)
 
-    def save(self, news: News, db: Session):
+    def save(self, news: NewsWithSummary, db: Session):
         """
         Saves a news article to the database.
     
@@ -124,7 +119,7 @@ class UDNCrawler(NewsCrawlerBase):
         """
         try:
             if db:
-                db.add(news)
+                db.add(NewsArticle(**news.model_dump()))
                 db.commit()
         except Exception as e:
             if db:

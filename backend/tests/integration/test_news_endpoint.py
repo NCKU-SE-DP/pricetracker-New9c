@@ -1,6 +1,7 @@
 import pytest
 from fastapi.testclient import TestClient
 from jose import jwt
+from src.crawler.crawler_base import Headline
 from sqlalchemy import create_engine, StaticPool
 from sqlalchemy.orm import sessionmaker
 import json
@@ -128,8 +129,8 @@ def mock_openai(mocker, return_content):
 def test_search_news(mocker):
     mock_openai(mocker, "keywords")
 
-    mock_get_new_info = mocker.patch("src.news.service._get_new_info", return_value=[
-        {"titleLink": "http://example.com/news1"}
+    mock_search = mocker.patch("src.news.service._search", return_value=[
+        Headline(title="Title of the article", titleLink="https://udn.com/news/story/7240/8383719")
     ])
 
     mock_get = mocker.patch("src.news.service.requests.get", return_value=mocker.Mock(

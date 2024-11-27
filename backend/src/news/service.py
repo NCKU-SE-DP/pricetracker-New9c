@@ -8,9 +8,12 @@ from urllib.parse import quote
 from . import utils
 from .config import configuration
 from ..models import NewsArticle, User, user_news_association_table
+from ..crawler.crawler_base import NewsWithSummary
+from ..crawler.udn_crawler import UDNCrawler
 
 
 _id_counter = itertools.count(start=1000000)
+crawler = UDNCrawler()
 
 def _generate_news_id() -> int:
     return next(_id_counter)
@@ -45,57 +48,10 @@ def summarize_news(content: str) -> dict:
     return json.loads(summary)
 
 
-def _add_new(news_data, db: Session):
-    """
-    add new to db
-    :param news_data: news info
-    :return:
-    """
-    db.add(NewsArticle(
-        url=news_data["url"],
-        title=news_data["title"],
-        time=news_data["time"],
-        content=news_data["content"],
-        summary=news_data["summary"],
-        reason=news_data["reason"],
-    ))
-    db.commit()
-
-def _get_new_info(search_term, is_initial=False):
-    """
-    get new
-
-    :param search_term:
-    :param is_initial:
-    :return:
-    """
-    all_news_data = []
-    # iterate pages to get more news data, not actually get all news data
-    if is_initial: # clear up meaning
-        all_lists= []
-        for page_num in range(1, 10):
-            parameters = {
-                "page": page_num,
-                "id": f"search:{quote(search_term)}",
-                "channelId": 2,
-                "type": "searchword",
-            }
-            response = requests.get(configuration.news_api_url, params=parameters)
-            all_lists.append(response.json()["lists"])
-
-        for existing_list in all_lists:
-            all_news_data.append(existing_list)
-    else:
-        parameters = {
-            "page": 1,
-            "id": f"search:{quote(search_term)}",
-            "channelId": 2,
-            "type": "searchword",
-        }
-        response = requests.get(configuration.news_api_url, params=parameters)
-
-        all_news_data = response.json()["lists"]
-    return all_news_data
+def _search(search_term, is_initial=False):
+    if is_initial:
+        return crawler.startup(search_term)
+    return crawler.get_headline(search_term, page=1)
 
 def get_new(db:Session, is_initial=False):
     """
@@ -104,20 +60,24 @@ def get_new(db:Session, is_initial=False):
     :param is_initial:
     :return:
     """
-    news_data = _get_new_info("價格", is_initial=is_initial)
+    news_data = _search("價格", is_initial=is_initial)
     for news in news_data:
         relevance = _ask_openAI(
             system_prompt="你是一個關聯度評估機器人，請評估新聞標題是否與「民生用品的價格變化」相關，並給予'high'、'medium'、'low'評價。(僅需回答'high'、'medium'、'low'三個詞之一)",
             user_prompt = news["title"]
         )
         if relevance == "high":
-            response = requests.get(news["titleLink"])
-            detailed_news = utils.parse_news_html(response.text)
-            detailed_news["url"] = news["titleLink"]
-            summary = summarize_news(detailed_news["content"])
-            detailed_news["summary"] = summary["影響"]
-            detailed_news["reason"] = summary["原因"]
-            _add_new(detailed_news, db)
+            news = crawler.validate_and_parse(news.url)
+            summary = summarize_news(news.content)
+            news_with_summary = NewsWithSummary(
+                title=news.title,
+                url=news.url,
+                time=news.time,
+                content=news.content,
+                summary=summary["影響"],
+                reason=summary["原因"]
+            )
+            crawler.save(news_with_summary, db)
 
 def _get_article_upvote_details(article_id, user_id, db): #make it more understandable
     counted_upvotes = ( # I assume this is how many upvotes the article has
@@ -174,11 +134,10 @@ def search_news(prompt: str) -> list:
     news_list = []
     keywords = _extract_search_keywords(prompt)
     # should change into simple factory pattern
-    news_snapshots = _get_new_info(keywords, is_initial=False)
+    news_snapshots = _search(keywords, is_initial=False)
     for snapshot in news_snapshots:
         try:
-            response = requests.get(snapshot["titleLink"])
-            news = utils.parse_news_html(response.text)
+            news = crawler.validate_and_parse(snapshot.url).model_dump()
             news["id"] = _generate_news_id()
             news_list.append(news)
         except Exception as exception:
