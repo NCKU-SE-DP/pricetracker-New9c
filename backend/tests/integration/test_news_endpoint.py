@@ -1,10 +1,7 @@
 import pytest
 from fastapi.testclient import TestClient
 from jose import jwt
-<<<<<<< HEAD
 from src.crawler.crawler_base import Headline
-=======
->>>>>>> 81099c0da5538be50c1c59033708224dbc715852
 from sqlalchemy import create_engine, StaticPool
 from sqlalchemy.orm import sessionmaker
 import json
@@ -13,10 +10,6 @@ from src.main import app
 from src.models import Base, NewsArticle, User
 from src.news.schemas import NewsSumaryRequestSchema
 from src.user import service as user_service
-<<<<<<< HEAD
-=======
-
->>>>>>> 81099c0da5538be50c1c59033708224dbc715852
 from unittest.mock import Mock
 
 
@@ -136,13 +129,8 @@ def mock_openai(mocker, return_content):
 def test_search_news(mocker):
     mock_openai(mocker, "keywords")
 
-<<<<<<< HEAD
     mock_search = mocker.patch("src.news.service._search", return_value=[
         Headline(title="Title of the article", titleLink="https://udn.com/news/story/7240/8383719")
-=======
-    mock_get_new_info = mocker.patch("src.news.service._get_new_info", return_value=[
-        {"titleLink": "http://example.com/news1"}
->>>>>>> 81099c0da5538be50c1c59033708224dbc715852
     ])
 
     mock_get = mocker.patch("src.news.service.requests.get", return_value=mocker.Mock(

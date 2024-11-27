@@ -2,10 +2,6 @@ import pytest
 from fastapi.testclient import TestClient
 from unittest.mock import patch
 from src.main import app
-<<<<<<< HEAD
-=======
-
->>>>>>> 81099c0da5538be50c1c59033708224dbc715852
 
 client = TestClient(app)
 
