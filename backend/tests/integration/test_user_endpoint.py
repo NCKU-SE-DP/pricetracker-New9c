@@ -7,6 +7,10 @@ from src.database import get_database
 from src.main import app
 from src.models import Base, User
 from src.user import service as user_service
+<<<<<<< HEAD
+=======
+
+>>>>>>> 81099c0da5538be50c1c59033708224dbc715852
 
 SECRET_KEY = "1892dhianiandowqd0n"
 ALGORITHM = "HS256"
