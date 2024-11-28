@@ -21,7 +21,6 @@ async def login_for_access_token(
 def create_user(user: UserAuthSchema, db: DatabaseSession):
     """create user"""
     db_user = service.register_user(db, user.username, user.password)
-
     return db_user
 
 

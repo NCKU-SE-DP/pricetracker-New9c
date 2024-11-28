@@ -8,7 +8,6 @@ from src.main import app
 from src.models import Base, User
 from src.user import service as user_service
 
-
 SECRET_KEY = "1892dhianiandowqd0n"
 ALGORITHM = "HS256"
 # SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
