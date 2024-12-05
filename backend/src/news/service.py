@@ -23,25 +23,8 @@ def _generate_news_id() -> int:
 def _news_exists(news_id, db: Session): # id2 does not say what it does
     return db.query(NewsArticle).filter_by(id=news_id).first() is not None
 
-def _ask_openAI(system_prompt: str, user_prompt: str) -> str | None:
-    messages = [
-        {"role": "system", "content": system_prompt},
-        {"role": "user", "content": user_prompt}
-    ]
-    completion = OpenAI(api_key=configuration.open_ai_api_key).chat.completions.create(
-        model=configuration.open_ai_model,
-        messages=messages
-    )
-    response = completion.choices[0].message.content
-    return response
 
 
-def _extract_search_keywords(news_expectation: str) -> str | None:
-    keywords = _ask_openAI(
-        system_prompt="你是一個關鍵字提取機器人，用戶將會輸入一段文字，表示其希望看見的新聞內容，請提取出用戶希望看見的關鍵字，請截取最重要的關鍵字即可，避免出現「新聞」、「資訊」等混淆搜尋引擎的字詞。(僅須回答關鍵字，若有多個關鍵字，請以空格分隔)",
-        user_prompt=news_expectation
-    )
-    return keywords
 def summarize_news(content: str) -> dict:
     summary = llm_client.generate_summary(content)
     return json.loads(summary)
