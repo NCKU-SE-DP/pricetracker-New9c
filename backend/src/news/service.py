@@ -10,10 +10,12 @@ from .config import configuration
 from ..models import NewsArticle, User, user_news_association_table
 from ..crawler.crawler_base import NewsWithSummary
 from ..crawler.udn_crawler import UDNCrawler
+from ..llm_client.llm_client import LLMClient
 
 
 _id_counter = itertools.count(start=1000000)
 crawler = UDNCrawler()
+llm_client = LLMClient(_api_key=configuration.open_ai_api_key)
 
 def _generate_news_id() -> int:
     return next(_id_counter)
@@ -41,10 +43,7 @@ def _extract_search_keywords(news_expectation: str) -> str | None:
     )
     return keywords
 def summarize_news(content: str) -> dict:
-    summary = _ask_openAI(
-        system_prompt="你是一個新聞摘要生成機器人，請統整新聞中提及的影響及主要原因 (影響、原因各50個字，請以json格式回答 {'影響': '...', '原因': '...'})",
-        user_prompt=content
-    )
+    summary = llm_client.generate_summary(content)
     return json.loads(summary)
 
 
@@ -62,10 +61,7 @@ def get_new(db:Session, is_initial=False):
     """
     news_data = _search("價格", is_initial=is_initial)
     for news in news_data:
-        relevance = _ask_openAI(
-            system_prompt="你是一個關聯度評估機器人，請評估新聞標題是否與「民生用品的價格變化」相關，並給予'high'、'medium'、'low'評價。(僅需回答'high'、'medium'、'low'三個詞之一)",
-            user_prompt = news["title"]
-        )
+        relevance = llm_client.evaluate_relevance(news["title"])
         if relevance == "high":
             news = crawler.validate_and_parse(news.url)
             summary = summarize_news(news.content)
@@ -132,7 +128,7 @@ def retrieve_news_with_upvote_status(database: Session, user: User | None):
 
 def search_news(prompt: str) -> list:
     news_list = []
-    keywords = _extract_search_keywords(prompt)
+    keywords = llm_client.extract_search_keywords(prompt)
     # should change into simple factory pattern
     news_snapshots = _search(keywords, is_initial=False)
     for snapshot in news_snapshots:
