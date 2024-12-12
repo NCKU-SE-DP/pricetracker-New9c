@@ -1,6 +1,13 @@
 import abc
 from pydantic import BaseModel, Field
-from openai import OpenAI
+import aisuite as ai
+from enum import Enum
+
+class RelevanceEvaluation(str, Enum):
+    HIGH = "high"
+    MEDIUM = "medium"
+    LOW = "low"
+
 class PromptPassingInterface(BaseModel):
     system_content: str = Field(...)
     user_content: str = Field(...)
@@ -12,7 +19,7 @@ class PromptPassingInterface(BaseModel):
         ]
         return value
 class LLMClientBase(metaclass=abc.ABCMeta):
-    openai_client: OpenAI | None
+    client: ai.Client = ...
     @abc.abstractmethod
     def _generate(self, prompt: PromptPassingInterface) -> str:
         """
