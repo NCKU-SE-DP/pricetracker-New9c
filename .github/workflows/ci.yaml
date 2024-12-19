@@ -38,6 +38,7 @@ jobs:
       #     pytest tests/unit --cov=src --cov-report=xml --disable-warnings
       - name: Create .env file
         run: |
+          cd backend/src
           echo "OPEN_AI_API_KEY=${{ secrets.OPEN_AI_API_KEY }}" >> .env
           echo "ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }}" >> .env
       - name: Run integration tests (with mock DB)
