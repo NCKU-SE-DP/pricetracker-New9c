@@ -1,0 +1,133 @@
+2024-12-19 06:54:20,931 - root : [DEBUG] Initializing...
+2024-12-19 06:54:21,205 - sqlalchemy.engine.Engine : [INFO] BEGIN (implicit)
+2024-12-19 06:54:21,205 - sqlalchemy.engine.Engine : [INFO] PRAGMA main.table_info("user_news_upvotes")
+2024-12-19 06:54:21,206 - sqlalchemy.engine.Engine : [INFO] [raw sql] ()
+2024-12-19 06:54:21,208 - sqlalchemy.engine.Engine : [INFO] PRAGMA main.table_info("users")
+2024-12-19 06:54:21,208 - sqlalchemy.engine.Engine : [INFO] [raw sql] ()
+2024-12-19 06:54:21,209 - sqlalchemy.engine.Engine : [INFO] PRAGMA main.table_info("news_articles")
+2024-12-19 06:54:21,209 - sqlalchemy.engine.Engine : [INFO] [raw sql] ()
+2024-12-19 06:54:21,210 - sqlalchemy.engine.Engine : [INFO] COMMIT
+2024-12-19 06:54:21,303 - passlib.utils.compat : [DEBUG] loaded lazy attr 'SafeConfigParser': <class 'configparser.ConfigParser'>
+2024-12-19 06:54:21,304 - passlib.utils.compat : [DEBUG] loaded lazy attr 'NativeStringIO': <class '_io.StringIO'>
+2024-12-19 06:54:21,304 - passlib.utils.compat : [DEBUG] loaded lazy attr 'BytesIO': <class '_io.BytesIO'>
+2024-12-19 06:54:21,315 - passlib.registry : [DEBUG] registered 'bcrypt' handler: <class 'passlib.handlers.bcrypt.bcrypt'>
+2024-12-19 06:54:21,977 - httpx : [DEBUG] load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-19 06:54:21,978 - httpx : [DEBUG] load_verify_locations cafile='/usr/local/lib/python3.10/site-packages/certifi/cacert.pem'
+2024-12-19 06:54:22,218 - httpx : [DEBUG] load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-19 06:54:22,219 - httpx : [DEBUG] load_verify_locations cafile='/usr/local/lib/python3.10/site-packages/certifi/cacert.pem'
+2024-12-19 06:54:22,497 - tzlocal : [DEBUG] /etc/timezone found, contents:
+ Etc/UTC
+
+2024-12-19 06:54:22,498 - tzlocal : [DEBUG] /etc/localtime found
+2024-12-19 06:54:22,502 - tzlocal : [DEBUG] 2 found:
+ {'/etc/timezone': 'Etc/UTC', '/etc/localtime is a symlink to': 'Etc/UTC'}
+2024-12-19 06:54:22,534 - sqlalchemy.engine.Engine : [INFO] BEGIN (implicit)
+2024-12-19 06:54:22,539 - sqlalchemy.engine.Engine : [INFO] SELECT count(*) AS count_1 
+FROM (SELECT news_articles.id AS news_articles_id, news_articles.url AS news_articles_url, news_articles.title AS news_articles_title, news_articles.time AS news_articles_time, news_articles.content AS news_articles_content, news_articles.summary AS news_articles_summary, news_articles.reason AS news_articles_reason 
+FROM news_articles) AS anon_1
+2024-12-19 06:54:22,540 - sqlalchemy.engine.Engine : [INFO] [generated in 0.00075s] ()
+2024-12-19 06:54:22,541 - sqlalchemy.engine.Engine : [INFO] ROLLBACK
+2024-12-19 06:54:22,543 - apscheduler.scheduler : [INFO] Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2024-12-19 06:54:22,543 - apscheduler.scheduler : [INFO] Added job "start_scheduler.<locals>.job" to job store "default"
+2024-12-19 06:54:22,544 - apscheduler.scheduler : [INFO] Scheduler started
+2024-12-19 06:54:22,545 - apscheduler.scheduler : [DEBUG] Looking for jobs to run
+2024-12-19 06:54:22,545 - root : [DEBUG] Background scheduler started.
+2024-12-19 06:54:22,545 - apscheduler.scheduler : [DEBUG] Next wakeup is due at 2024-12-19 08:34:22.543084+00:00 (in 5999.997733 seconds)
+2024-12-19 06:54:22,545 - root : [INFO] PriceTracker backend has started.
+2024-12-19 06:54:50,092 - urllib3.connectionpool : [DEBUG] Starting new HTTPS connection (1): opendata.ey.gov.tw:443
+2024-12-19 06:54:51,583 - urllib3.connectionpool : [DEBUG] https://opendata.ey.gov.tw:443 "GET /api/ConsumerProtection/NecessitiesPrice HTTP/11" 200 None
+2024-12-19 06:54:51,778 - urllib3.connectionpool : [DEBUG] Starting new HTTPS connection (1): o4508492299501568.ingest.us.sentry.io:443
+2024-12-19 06:54:52,277 - urllib3.connectionpool : [DEBUG] https://o4508492299501568.ingest.us.sentry.io:443 "POST /api/4508492353699840/envelope/ HTTP/11" 200 None
+2024-12-19 06:54:59,745 - apscheduler.scheduler : [INFO] Scheduler has been shut down
+2024-12-19 06:54:59,746 - apscheduler.scheduler : [DEBUG] Looking for jobs to run
+2024-12-19 06:54:59,746 - apscheduler.scheduler : [DEBUG] No jobs; waiting until a job is added
+2024-12-19 06:54:59,746 - root : [DEBUG] Background scheduler shut down.
+2024-12-19 06:59:07,526 - root : [DEBUG] Initializing...
+2024-12-19 06:59:07,744 - sqlalchemy.engine.Engine : [INFO] BEGIN (implicit)
+2024-12-19 06:59:07,744 - sqlalchemy.engine.Engine : [INFO] PRAGMA main.table_info("user_news_upvotes")
+2024-12-19 06:59:07,745 - sqlalchemy.engine.Engine : [INFO] [raw sql] ()
+2024-12-19 06:59:07,746 - sqlalchemy.engine.Engine : [INFO] PRAGMA main.table_info("users")
+2024-12-19 06:59:07,747 - sqlalchemy.engine.Engine : [INFO] [raw sql] ()
+2024-12-19 06:59:07,748 - sqlalchemy.engine.Engine : [INFO] PRAGMA main.table_info("news_articles")
+2024-12-19 06:59:07,749 - sqlalchemy.engine.Engine : [INFO] [raw sql] ()
+2024-12-19 06:59:07,750 - sqlalchemy.engine.Engine : [INFO] COMMIT
+2024-12-19 06:59:07,821 - passlib.utils.compat : [DEBUG] loaded lazy attr 'SafeConfigParser': <class 'configparser.ConfigParser'>
+2024-12-19 06:59:07,821 - passlib.utils.compat : [DEBUG] loaded lazy attr 'NativeStringIO': <class '_io.StringIO'>
+2024-12-19 06:59:07,822 - passlib.utils.compat : [DEBUG] loaded lazy attr 'BytesIO': <class '_io.BytesIO'>
+2024-12-19 06:59:07,834 - passlib.registry : [DEBUG] registered 'bcrypt' handler: <class 'passlib.handlers.bcrypt.bcrypt'>
+2024-12-19 06:59:08,280 - httpx : [DEBUG] load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-19 06:59:08,282 - httpx : [DEBUG] load_verify_locations cafile='/usr/local/lib/python3.10/site-packages/certifi/cacert.pem'
+2024-12-19 06:59:08,474 - httpx : [DEBUG] load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-19 06:59:08,475 - httpx : [DEBUG] load_verify_locations cafile='/usr/local/lib/python3.10/site-packages/certifi/cacert.pem'
+2024-12-19 06:59:08,671 - tzlocal : [DEBUG] /etc/timezone found, contents:
+ Etc/UTC
+
+2024-12-19 06:59:08,672 - tzlocal : [DEBUG] /etc/localtime found
+2024-12-19 06:59:08,673 - tzlocal : [DEBUG] 2 found:
+ {'/etc/timezone': 'Etc/UTC', '/etc/localtime is a symlink to': 'Etc/UTC'}
+2024-12-19 06:59:08,705 - sqlalchemy.engine.Engine : [INFO] BEGIN (implicit)
+2024-12-19 06:59:08,711 - sqlalchemy.engine.Engine : [INFO] SELECT count(*) AS count_1 
+FROM (SELECT news_articles.id AS news_articles_id, news_articles.url AS news_articles_url, news_articles.title AS news_articles_title, news_articles.time AS news_articles_time, news_articles.content AS news_articles_content, news_articles.summary AS news_articles_summary, news_articles.reason AS news_articles_reason 
+FROM news_articles) AS anon_1
+2024-12-19 06:59:08,712 - sqlalchemy.engine.Engine : [INFO] [generated in 0.00085s] ()
+2024-12-19 06:59:08,713 - sqlalchemy.engine.Engine : [INFO] ROLLBACK
+2024-12-19 06:59:08,715 - apscheduler.scheduler : [INFO] Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2024-12-19 06:59:08,716 - apscheduler.scheduler : [INFO] Added job "start_scheduler.<locals>.job" to job store "default"
+2024-12-19 06:59:08,718 - apscheduler.scheduler : [INFO] Scheduler started
+2024-12-19 06:59:08,719 - apscheduler.scheduler : [DEBUG] Looking for jobs to run
+2024-12-19 06:59:08,719 - root : [DEBUG] Background scheduler started.
+2024-12-19 06:59:08,720 - root : [INFO] PriceTracker backend has started.
+2024-12-19 06:59:08,719 - apscheduler.scheduler : [DEBUG] Next wakeup is due at 2024-12-19 08:39:08.715352+00:00 (in 5999.995558 seconds)
+2024-12-19 06:59:22,659 - apscheduler.scheduler : [INFO] Scheduler has been shut down
+2024-12-19 06:59:22,659 - apscheduler.scheduler : [DEBUG] Looking for jobs to run
+2024-12-19 06:59:22,659 - apscheduler.scheduler : [DEBUG] No jobs; waiting until a job is added
+2024-12-19 06:59:22,660 - root : [DEBUG] Background scheduler shut down.
+2024-12-19 07:24:00,038 - root : [DEBUG] Initializing...
+2024-12-19 07:24:00,428 - sqlalchemy.engine.Engine : [INFO] BEGIN (implicit)
+2024-12-19 07:24:00,429 - sqlalchemy.engine.Engine : [INFO] PRAGMA main.table_info("user_news_upvotes")
+2024-12-19 07:24:00,430 - sqlalchemy.engine.Engine : [INFO] [raw sql] ()
+2024-12-19 07:24:00,433 - sqlalchemy.engine.Engine : [INFO] PRAGMA main.table_info("users")
+2024-12-19 07:24:00,434 - sqlalchemy.engine.Engine : [INFO] [raw sql] ()
+2024-12-19 07:24:00,435 - sqlalchemy.engine.Engine : [INFO] PRAGMA main.table_info("news_articles")
+2024-12-19 07:24:00,435 - sqlalchemy.engine.Engine : [INFO] [raw sql] ()
+2024-12-19 07:24:00,437 - sqlalchemy.engine.Engine : [INFO] COMMIT
+2024-12-19 07:24:00,565 - passlib.utils.compat : [DEBUG] loaded lazy attr 'SafeConfigParser': <class 'configparser.ConfigParser'>
+2024-12-19 07:24:00,565 - passlib.utils.compat : [DEBUG] loaded lazy attr 'NativeStringIO': <class '_io.StringIO'>
+2024-12-19 07:24:00,565 - passlib.utils.compat : [DEBUG] loaded lazy attr 'BytesIO': <class '_io.BytesIO'>
+2024-12-19 07:24:00,578 - passlib.registry : [DEBUG] registered 'bcrypt' handler: <class 'passlib.handlers.bcrypt.bcrypt'>
+2024-12-19 07:24:01,335 - httpx : [DEBUG] load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-19 07:24:01,336 - httpx : [DEBUG] load_verify_locations cafile='/usr/local/lib/python3.10/site-packages/certifi/cacert.pem'
+2024-12-19 07:24:01,616 - httpx : [DEBUG] load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-19 07:24:01,618 - httpx : [DEBUG] load_verify_locations cafile='/usr/local/lib/python3.10/site-packages/certifi/cacert.pem'
+2024-12-19 07:24:01,905 - tzlocal : [DEBUG] /etc/timezone found, contents:
+ Etc/UTC
+
+2024-12-19 07:24:01,907 - tzlocal : [DEBUG] /etc/localtime found
+2024-12-19 07:24:01,909 - tzlocal : [DEBUG] 2 found:
+ {'/etc/timezone': 'Etc/UTC', '/etc/localtime is a symlink to': 'Etc/UTC'}
+2024-12-19 07:24:01,938 - sqlalchemy.engine.Engine : [INFO] BEGIN (implicit)
+2024-12-19 07:24:01,946 - sqlalchemy.engine.Engine : [INFO] SELECT count(*) AS count_1 
+FROM (SELECT news_articles.id AS news_articles_id, news_articles.url AS news_articles_url, news_articles.title AS news_articles_title, news_articles.time AS news_articles_time, news_articles.content AS news_articles_content, news_articles.summary AS news_articles_summary, news_articles.reason AS news_articles_reason 
+FROM news_articles) AS anon_1
+2024-12-19 07:24:01,947 - sqlalchemy.engine.Engine : [INFO] [generated in 0.00109s] ()
+2024-12-19 07:24:01,949 - sqlalchemy.engine.Engine : [INFO] ROLLBACK
+2024-12-19 07:24:01,951 - apscheduler.scheduler : [INFO] Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2024-12-19 07:24:01,951 - apscheduler.scheduler : [INFO] Added job "start_scheduler.<locals>.job" to job store "default"
+2024-12-19 07:24:01,952 - apscheduler.scheduler : [INFO] Scheduler started
+2024-12-19 07:24:01,953 - apscheduler.scheduler : [DEBUG] Looking for jobs to run
+2024-12-19 07:24:01,954 - root : [DEBUG] Background scheduler started.
+2024-12-19 07:24:01,954 - apscheduler.scheduler : [DEBUG] Next wakeup is due at 2024-12-19 09:04:01.951024+00:00 (in 5999.996675 seconds)
+2024-12-19 07:24:01,954 - root : [INFO] PriceTracker backend has started.
+2024-12-19 07:24:23,782 - urllib3.connectionpool : [DEBUG] Starting new HTTPS connection (1): o4508492299501568.ingest.us.sentry.io:443
+2024-12-19 07:24:23,934 - urllib3.connectionpool : [DEBUG] https://o4508492299501568.ingest.us.sentry.io:443 "POST /api/4508492353699840/envelope/ HTTP/11" 200 None
+2024-12-19 07:24:23,993 - urllib3.connectionpool : [DEBUG] https://o4508492299501568.ingest.us.sentry.io:443 "POST /api/4508492353699840/envelope/ HTTP/11" 200 None
+2024-12-19 07:24:55,785 - root : [ERROR] Invalid AI model used
+2024-12-19 07:24:55,788 - root : [ERROR] Invalid model used
+2024-12-19 07:24:55,843 - urllib3.connectionpool : [DEBUG] https://o4508492299501568.ingest.us.sentry.io:443 "POST /api/4508492353699840/envelope/ HTTP/11" 200 None
+2024-12-19 07:24:55,893 - urllib3.connectionpool : [DEBUG] https://o4508492299501568.ingest.us.sentry.io:443 "POST /api/4508492353699840/envelope/ HTTP/11" 200 None
+2024-12-19 07:24:55,943 - urllib3.connectionpool : [DEBUG] https://o4508492299501568.ingest.us.sentry.io:443 "POST /api/4508492353699840/envelope/ HTTP/11" 200 None
+2024-12-19 07:24:55,995 - urllib3.connectionpool : [DEBUG] https://o4508492299501568.ingest.us.sentry.io:443 "POST /api/4508492353699840/envelope/ HTTP/11" 200 None
+2024-12-19 07:25:22,463 - apscheduler.scheduler : [INFO] Scheduler has been shut down
+2024-12-19 07:25:22,464 - apscheduler.scheduler : [DEBUG] Looking for jobs to run
+2024-12-19 07:25:22,465 - apscheduler.scheduler : [DEBUG] No jobs; waiting until a job is added
+2024-12-19 07:25:22,465 - root : [DEBUG] Background scheduler shut down.
