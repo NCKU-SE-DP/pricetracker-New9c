@@ -5,3 +5,4 @@ backend/.scannerwork
 backend/coverage.xml
 backend/.coverage
 backend/src/.env
+log
