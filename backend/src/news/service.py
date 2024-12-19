@@ -1,21 +1,27 @@
 import itertools
 import json
+from apscheduler.executors.base import logging
 from openai import OpenAI
 import requests
 from sqlalchemy import delete, insert, select
 from sqlalchemy.orm import Session
 from urllib.parse import quote
+from sentry_sdk import capture_exception
 from . import utils
 from .config import configuration
 from ..models import NewsArticle, User, user_news_association_table
 from ..crawler.crawler_base import NewsWithSummary
 from ..crawler.udn_crawler import UDNCrawler
-from ..llm_client.llm_client import LLMClient
+from ..llm_client.openai_client import OpenAIClient
+from ..llm_client.anthropic_client import AnthropicClient
+from ..llm_client.base import RelevanceEvaluation
+from .exceptions import InvalidAIModelException
 
 
 _id_counter = itertools.count(start=1000000)
 crawler = UDNCrawler()
-llm_client = LLMClient(_api_key=configuration.open_ai_api_key)
+openai_client = OpenAIClient(api_key=configuration.open_ai_api_key)
+anthropic_client = AnthropicClient(api_key=configuration.anthropic_api_key)
 
 def _generate_news_id() -> int:
     return next(_id_counter)
@@ -25,9 +31,16 @@ def _news_exists(news_id, db: Session): # id2 does not say what it does
 
 
 
-def summarize_news(content: str) -> dict:
-    summary = llm_client.generate_summary(content)
-    return json.loads(summary)
+def summarize_news(content: str, model:str = "open_ai") -> dict[str, str]:
+    summary = None
+    if model == "open_ai":
+        summary = openai_client.generate_summary(content)
+    elif model == "anthropic":
+        summary = anthropic_client.generate_summary(content)
+    if summary == None:
+        logging.error("Invalid AI model used")
+        raise InvalidAIModelException
+    return summary
 
 
 def _search(search_term, is_initial=False):
@@ -44,9 +57,11 @@ def get_new(db:Session, is_initial=False):
     """
     news_data = _search("價格", is_initial=is_initial)
     for news in news_data:
-        relevance = llm_client.evaluate_relevance(news["title"])
-        if relevance == "high":
+        relevance = openai_client.evaluate_relevance(news["title"])
+        if relevance == RelevanceEvaluation.HIGH:
             news = crawler.validate_and_parse(news.url)
+            if news is None:
+                continue
             summary = summarize_news(news.content)
             news_with_summary = NewsWithSummary(
                 title=news.title,
@@ -111,14 +126,14 @@ def retrieve_news_with_upvote_status(database: Session, user: User | None):
 
 def search_news(prompt: str) -> list:
     news_list = []
-    keywords = llm_client.extract_search_keywords(prompt)
+    keywords = openai_client.extract_search_keywords(prompt)
     # should change into simple factory pattern
     news_snapshots = _search(keywords, is_initial=False)
     for snapshot in news_snapshots:
         try:
             news = crawler.validate_and_parse(snapshot.url).model_dump()
-            news["id"] = _generate_news_id()
+            news["id"] = _generate_news_id() 
             news_list.append(news)
-        except Exception as exception:
-            print(exception)
+        except NewsExtractionError as e:
+            capture_exception(e)
     return sorted(news_list, key=lambda x: x["time"], reverse=True)
