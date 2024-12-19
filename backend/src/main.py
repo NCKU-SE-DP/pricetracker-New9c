@@ -19,6 +19,7 @@ sentry_sdk.init(
     dsn=configuration.sentry_dsn,
     traces_sample_rate=configuration.sentry_traces_sample_rate,
     profiles_sample_rate=configuration.sentry_profiles_sample_rate,
+    _experiments=configuration.sentry_experiments
 )
 
 app = FastAPI()
