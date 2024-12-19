@@ -1,8 +1,12 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from src.dependencies import DatabaseSession
 from src.user.dependencies import CurrentLoggedInUser
 from . import service
 from .schemas import PromptRequest, NewsSumaryRequestSchema, NewsSummaryCustomModelRequestSchema
+from .exceptions import InvalidAIModelException
+
+import logging
+from sentry_sdk import capture_exception
 
 router = APIRouter(prefix="/api/v1/news")
 
@@ -32,8 +36,13 @@ async def news_summary( news: NewsSumaryRequestSchema, user: CurrentLoggedInUser
     return response
 
 @router.post("/news_summary_custom_model")
-async def summarize_news_with_custom_model(schema: NewsSummaryCustomModelRequestSchema, user: CurrentLoggedInUser):
-    summary = service.summarize_news(schema.content, schema.llm_model)
+async def summarize_news_with_custom_model(schema: NewsSummaryCustomModelRequestSchema):
+    try:
+        summary = service.summarize_news(schema.content, schema.llm_model)
+    except InvalidAIModelException as e:
+        logging.error("Invalid model used")
+        capture_exception(e)
+        return HTTPException(status_code=400, detail="Passed in invalid LLM model")
     response = {}
     if summary:
         response["summary"] = summary["影響"]
@@ -46,6 +55,7 @@ def upvote_article(
         db: DatabaseSession,
         user: CurrentLoggedInUser,
 ):
+    logging.debug(f"Accessed /api/v1/news/{id}/upvote")
     message = service.toggle_upvote(id, user.id, db)
     return {"message": message}
 

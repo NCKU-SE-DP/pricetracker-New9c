@@ -32,13 +32,16 @@ UDNCrawler Methods:
     _commit_changes(db: Session): Commits the changes to the database with error handling.
 """
 
+from apscheduler.executors.base import logging
 import requests
+from sentry_sdk import capture_exception
 from bs4 import BeautifulSoup
 from pydantic import TypeAdapter
 from sqlalchemy.orm import Session
 from urllib.parse import quote
 from .crawler_base import NewsCrawlerBase, Headline, News, NewsWithSummary
 from ..models import NewsArticle
+from .exceptions import DomainMismatchException, ParseException, ExtractionException
 
 class UDNCrawler(NewsCrawlerBase):
     CHANNEL_ID = 2
@@ -111,8 +114,8 @@ class UDNCrawler(NewsCrawlerBase):
     
             return News(title=title, url=url, time=time, content=content)
         except Exception as e:
-            print(f"Error extracting news: {e}")
-            pass
+            logging.error(f"[UDN] Error extracting news content: {e}")
+            raise ExtractionException(url)
 
     def save(self, news: NewsWithSummary, db: Session):
         """
@@ -126,9 +129,10 @@ class UDNCrawler(NewsCrawlerBase):
                 db.add(NewsArticle(**news.model_dump()))
                 db.commit()
         except Exception as e:
+            logging.error(f"[UDNCrawler] Failed to save news to database: {e}")
+            capture_exception(e)
             if db:
                 db.rollback()
-            print(f"Error saving news: {e}")
 
     @staticmethod
     def _commit_changes(db: Session):

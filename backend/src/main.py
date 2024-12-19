@@ -3,6 +3,10 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List, Optional
 from fastapi import APIRouter, HTTPException, status, FastAPI
+from .logger import init_logger
+import logging
+init_logger()
+logging.debug("Initializing...")
 import os
 
 from .config import configuration
@@ -19,7 +23,7 @@ sentry_sdk.init(
     dsn=configuration.sentry_dsn,
     traces_sample_rate=configuration.sentry_traces_sample_rate,
     profiles_sample_rate=configuration.sentry_profiles_sample_rate,
-    _experiments=configuration.sentry_experiments
+    _experiments={"continuous_profiling_auto_start": True}
 )
 
 app = FastAPI()
@@ -50,11 +54,14 @@ def start_scheduler():
     scheduler.add_job(job, "interval", minutes=100)
 
     scheduler.start()
+    logging.debug("Background scheduler started.")
+    logging.info("PriceTracker backend has started.")
 
 
 @app.on_event("shutdown")
 def shutdown_scheduler():
     scheduler.shutdown()
+    logging.debug("Background scheduler shut down.")
 
 
 
