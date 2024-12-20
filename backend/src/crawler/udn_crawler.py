@@ -32,13 +32,16 @@ UDNCrawler Methods:
     _commit_changes(db: Session): Commits the changes to the database with error handling.
 """
 
+from apscheduler.executors.base import logging
 import requests
+from sentry_sdk import capture_exception
 from bs4 import BeautifulSoup
 from pydantic import TypeAdapter
 from sqlalchemy.orm import Session
 from urllib.parse import quote
 from .crawler_base import NewsCrawlerBase, Headline, News, NewsWithSummary
 from ..models import NewsArticle
+from .exceptions import DomainMismatchException, ParseException, ExtractionException
 
 class UDNCrawler(NewsCrawlerBase):
     CHANNEL_ID = 2
@@ -93,22 +96,26 @@ class UDNCrawler(NewsCrawlerBase):
         :param url: The URL of the news article.
         :return: A News object with the extracted title, time, and content.
         """
-        # Extract the title
-        title = soup.find("h1", class_="article-content__title").text.strip()
+        try:
+            # Extract the title
+            title = soup.find("h1", class_="article-content__title").text.strip()
     
-        # Extract the publication time
-        time = soup.find("time", class_="article-content__time").text.strip()
+            # Extract the publication time
+            time = soup.find("time", class_="article-content__time").text.strip()
     
-        # Extract the article content
-        content_section = soup.find("section", class_="article-content__editor")
-        paragraphs = [
-            paragraph.text.strip()
-            for paragraph in content_section.find_all("p")
-            if paragraph.text.strip() and "▪" not in paragraph.text
-        ]
-        content = " ".join(paragraphs)
+            # Extract the article content
+            content_section = soup.find("section", class_="article-content__editor")
+            paragraphs = [
+                paragraph.text.strip()
+                for paragraph in content_section.find_all("p")
+                if paragraph.text.strip() and "▪" not in paragraph.text
+            ]
+            content = " ".join(paragraphs)
     
-        return News(title=title, url=url, time=time, content=content)
+            return News(title=title, url=url, time=time, content=content)
+        except Exception as e:
+            logging.error(f"[UDN] Error extracting news content: {e}")
+            raise ExtractionException(url)
 
     def save(self, news: NewsWithSummary, db: Session):
         """
@@ -122,9 +129,10 @@ class UDNCrawler(NewsCrawlerBase):
                 db.add(NewsArticle(**news.model_dump()))
                 db.commit()
         except Exception as e:
+            logging.error(f"[UDNCrawler] Failed to save news to database: {e}")
+            capture_exception(e)
             if db:
                 db.rollback()
-            print(f"Error saving news: {e}")
 
     @staticmethod
     def _commit_changes(db: Session):
