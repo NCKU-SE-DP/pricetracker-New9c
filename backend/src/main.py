@@ -40,7 +40,7 @@ def start_scheduler():
     db = get_database_persist_changes_disabled()
     if db.query(NewsArticle).count() == 0:
         # should change into simple factory pattern
-        news_service.get_new()
+        news_service.get_new(db)
     db.close()
     def job():
         database = get_database()
