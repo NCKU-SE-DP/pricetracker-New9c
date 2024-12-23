@@ -1,10 +1,12 @@
 import itertools
 import json
+from apscheduler.executors.base import logging
 from openai import OpenAI
 import requests
 from sqlalchemy import delete, insert, select
 from sqlalchemy.orm import Session
 from urllib.parse import quote
+from sentry_sdk import capture_exception
 from . import utils
 from .config import configuration
 from ..models import NewsArticle, User, user_news_association_table
@@ -13,6 +15,7 @@ from ..crawler.udn_crawler import UDNCrawler
 from ..llm_client.openai_client import OpenAIClient
 from ..llm_client.anthropic_client import AnthropicClient
 from ..llm_client.base import RelevanceEvaluation
+from .exceptions import InvalidAIModelException
 
 
 _id_counter = itertools.count(start=1000000)
@@ -28,12 +31,15 @@ def _news_exists(news_id, db: Session): # id2 does not say what it does
 
 
 
-def summarize_news(content: str, model:str = "open_ai") -> dict[str, str]|None:
+def summarize_news(content: str, model:str = "open_ai") -> dict[str, str]:
     summary = None
     if model == "open_ai":
         summary = openai_client.generate_summary(content)
     elif model == "anthropic":
         summary = anthropic_client.generate_summary(content)
+    if summary == None:
+        logging.error("Invalid AI model used")
+        raise InvalidAIModelException
     return summary
 
 
@@ -126,8 +132,8 @@ def search_news(prompt: str) -> list:
     for snapshot in news_snapshots:
         try:
             news = crawler.validate_and_parse(snapshot.url).model_dump()
-            news["id"] = _generate_news_id()
+            news["id"] = _generate_news_id() 
             news_list.append(news)
-        except Exception as exception:
-            print(exception)
+        except NewsExtractionError as e:
+            capture_exception(e)
     return sorted(news_list, key=lambda x: x["time"], reverse=True)
