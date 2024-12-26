@@ -6,6 +6,7 @@ on:
       - 'main'
       - 'develop'
       - 'fix/integration-test'
+      - 'refactor/finale'
   pull_request:
     branches:
       - 'main'
@@ -30,16 +31,18 @@ jobs:
           pip install -r backend/requirements.txt
           pip install pytest pytest-mock pytest-cov
 
-      # - name: Run unit tests
-      #   env:
-      #     OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      #   run: |
-      #     cd backend
-      #     pytest tests/unit --cov=src --cov-report=xml --disable-warnings
+      - name: Run unit tests
+        env:
+          OPEN_AI_API_KEY: ${{secrets.OPEN_AI_API_KEY}}
+          ANTHROPIC_API_KEY: ${{secrets.ANTHROPIC_API_KEY}}
+        run: |
+          cd backend
+          pytest tests/unit --cov=src --cov-report=xml --disable-warnings
+
       - name: Run integration tests (with mock DB)
         env:
-            OPEN_AI_API_KEY: ${{secrets.OPEN_AI_API_KEY}}
-            ANTHROPIC_API_KEY: ${{secrets.ANTHROPIC_API_KEY}}
+          OPEN_AI_API_KEY: ${{secrets.OPEN_AI_API_KEY}}
+          ANTHROPIC_API_KEY: ${{secrets.ANTHROPIC_API_KEY}}
         run: |
           cd backend
           pytest tests/integration --cov=src --cov-report=xml --disable-warnings

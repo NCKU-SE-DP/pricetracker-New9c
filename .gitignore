@@ -1,7 +1,9 @@
 .pytest_cache
 __pycache__
 .env
-backend/.scannerwork
+.scannerwork
+backend/news_database.db
+backend/test.db
 backend/coverage.xml
 backend/.coverage
 backend/src/.env

@@ -83,9 +83,15 @@ class UDNCrawler(NewsCrawlerBase):
         return TypeAdapter(list[Headline]).validate_python(response.json()["lists"])
 
     def parse(self, url: str) -> News:
-        response = self._perform_request(url=url)
-        soup = BeautifulSoup(response.text, "html.parser")
-        return self._extract_news(soup, url)
+        response = self._perform_request(url)
+        if not self._is_valid_url(url):
+            logging.error(f"[UDNCrawler] Domain mismatch for URL: {url}")
+            raise DomainMismatchException(url)
+        try:
+            return self._extract_news(BeautifulSoup(response.text, "html.parser"), url)
+        except Exception as e:
+            logging.error(f"[UDNCrawler] Error parsing news content: {e}")
+            raise ParseException(url)
 
     @staticmethod
     def _extract_news(soup: BeautifulSoup, url: str) -> News:
@@ -96,6 +102,9 @@ class UDNCrawler(NewsCrawlerBase):
         :param url: The URL of the news article.
         :return: A News object with the extracted title, time, and content.
         """
+        #logging.debug(f"[UDNCrawler] Extracting news content from: {url}")
+        print(f"[UDNCrawler] Extracting news content from: {url}")
+        print(soup.prettify())
         try:
             # Extract the title
             title = soup.find("h1", class_="article-content__title").text.strip()
